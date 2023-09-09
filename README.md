@@ -1,4 +1,4 @@
-# Laboratorios de Sistemas Operativos 2023-2
+# Laboratorios de Sistemas Operativos (2023-2)
 
 Integrantes:
 * Cristian Camilo Penagos Ospina
