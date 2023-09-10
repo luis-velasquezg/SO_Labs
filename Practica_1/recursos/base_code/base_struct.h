@@ -14,7 +14,7 @@ typedef enum
   S = 6, //-> "San Diego"
   A = 7, //-> "Austin"
   E = 8, //-> "Not found"
-} city_t;s
+} city_t;
 
 extern const char *const city_names[9];
 
