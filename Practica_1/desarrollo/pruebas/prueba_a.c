@@ -5,13 +5,38 @@
 
 // Se define la Constante MAX_NODOS
 #define MAX_NODOS 20 // Máximo de nodos
+#define HASH_SIZE 100
+
+bool tablaHash[HASH_SIZE];
+
+
+// Insertar vertice en la tabla hash
+void insertarVertice(char vertice) {
+  unsigned int indice = (unsigned int)vertice % HASH_SIZE;
+  tablaHash[indice] = true;
+} 
+
+// Estructura de Vertice
+typedef struct Vertice {
+  char letra;
+  int id;
+}
+
 
 // int main(int argc, char *argv[])
 int main()
 {
 
-  printf("Su nombre es %s, tiene %d años \n", "Ana", 16);
+  // bool tablaHash[HASH_SIZE];
 
+
+  for (int i = 0; i < TABLE_SIZE; i++) {
+        myHashTable.table[i] = NULL;
+    }
+    myHashTable.elementCount = 0; // Inicializar la cantidad de elementos
+
+
+  printf("Su nombre es %s, tiene %d años \n", "Ana", 16);
 
 
   bool esDirigido = false; // Variable para indicar si el grafo es dirigido o no
@@ -43,6 +68,8 @@ int main()
   printf("linea 2: %s \n", linea);
 
 
+
+  int nodosDetectados = 0;
   // Parsear las aristas y los costos
   char *token = strtok(linea, ";");
   printf("token: %s\n", token);
@@ -50,10 +77,29 @@ int main()
   {
     char nodoInicial, nodoFinal;
     int costo;
-    if (sscanf(token, " (%c, %c, %d)", &nodoInicial, &nodoFinal, &costo) == 3)
+
+    // int x = sscanf(token, " (%c, %c, %d)", &nodoInicial, &nodoFinal, &costo);
+    // printf("x: %d\n", x);
+    // printf("nodoInicial: %c\n", nodoInicial);
+    // printf("nodoFinal: %c\n", nodoFinal);
+    // printf("costo: %d\n", costo);
+
+    if (sscanf(token, " (%c, %c, %d)", &nodo1, &nodo2, &costo) == 3)
     {
+      Vertice nodoInicial;
+      nodoInicial.letra = nodo1;
+      nodoInicial.id = nodosDetectados;
+      nodosDetectados++;
+
+      {
+        /* data */
+      };
+      
+
       int i = nodoInicial - 'A';
-      int j = nodoFinal - 'A';
+      int j = nodoFinal - 'A';  
+
+      printf("i: %d, j: %d\n", i, j);
 
       // Establecer la entrada en la matriz de adyacencia
       matrizAdyacencia[i][j] = costo;

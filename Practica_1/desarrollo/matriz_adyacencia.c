@@ -2,21 +2,85 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+// #include "pq.h"
 
 // Se define la Constante MAX_NODOS
-#define MAX_NODOS 20 // Máximo de nodos
+#define MAX_NODOS 20      // Maximo de nodos
+#define HASH_SIZE 100     // Tamanio de tabla hash
+#define LINE_BUFFER 400   // Buffer para leer cada linea del archivo
 
-int main(int argc, char *argv[])
-{
-  // Revisa si el numero de argumentos sea el correcto
-  if (argc != 2)
+
+// Estructura de Vertice
+typedef struct {
+  char letra;
+  int id;
+} Vertice;
+
+
+// Tabla Hash de Vertices (para consultar su id teniendo la letra)
+Vertice tablaHash[HASH_SIZE];
+// Arreglo de Vertices (para consultar la letra teniendo su id)
+char listaVertices[MAX_NODOS];
+int contadorElementos;
+
+
+// Funcion de hash simple para convertir un caracter en un indice
+unsigned int hash(char c) {
+    return (unsigned int)c % HASH_SIZE;
+}
+
+// Insertar vertice en la tabla hash
+void insertarVertice (char vertice) {
+  unsigned int indice = hash(vertice);
+  if (tablaHash[indice].letra == '\0' && contadorElementos < MAX_NODOS)
   {
+    Vertice verticeNuevo;
+    verticeNuevo.letra = vertice;
+    verticeNuevo.id = contadorElementos;
+    
+    // Se almacena el Vertice en la Tabla Hash y la Lista de Vertices
+    tablaHash[indice] = verticeNuevo;
+    listaVertices[contadorElementos] = vertice;
+    
+    contadorElementos++;
+  }
+}
+
+// Retorna el id de un vertice dada su letra
+// Retorna -1 si no lo encuntra 
+int obtenerVerticeId(char vertice) {
+  unsigned int indice = hash(vertice);
+  if (tablaHash[indice].letra != '\0') {
+    return tablaHash[indice].id;
+  }
+  return -1;
+}
+
+
+int main(int argc, char *argv[]) {
+
+  // Revisa si el numero de argumentos sea el correcto
+  if (argc != 2) {
     printf("Uso correcto: %s <nombre_archivo>\n", argv[0]);
     return 1;
   }
+  
+  // Reinicia la Tabla Hash
+  for (int i = 0; i < HASH_SIZE; i++) {
+    tablaHash[i].letra = '\0'; // Caracter nulo ('\0')
+  }
+
+  // Reinicia la Lista de Vertices
+  for (int i = 0; i < MAX_NODOS; i++) {
+    listaVertices[i] = '\0'; // Caracter nulo
+  }
+  
+  // Reinicia el Contador de Elementos
+  contadorElementos = 0;
+
 
   bool esDirigido = false; // Variable para indicar si el grafo es dirigido o no
-  char linea[100]; // Buffer para leer cada linea del archivo
+  char linea[LINE_BUFFER]; // Buffer para leer cada linea del archivo
   int matrizAdyacencia[MAX_NODOS][MAX_NODOS] = {0}; // Inicializa la matriz de adyacencia
 
   // Abrir el archivo para lectura
@@ -47,17 +111,27 @@ int main(int argc, char *argv[])
     int costo;
     if (sscanf(token, " (%c, %c, %d)", &nodoInicial, &nodoFinal, &costo) == 3)
     {
-      int i = nodoInicial - 'A';
-      int j = nodoFinal - 'A';
+      insertarVertice(nodoInicial);
+      insertarVertice(nodoFinal);
 
-      // Establecer la entrada en la matriz de adyacencia
-      matrizAdyacencia[i][j] = costo;
+      // int i = nodoInicial - 'A';
+      // int j = nodoFinal - 'A';
 
-      // Si el grafo no es dirigido, se podra recorrer tambien de manera inversa
-      if (!esDirigido)
-      {
-        matrizAdyacencia[j][i] = costo;
+      int indexOrigen = obtenerVerticeId(nodoInicial);
+      int indexDestino = obtenerVerticeId(nodoFinal);
+
+      // Establecer los costos en la matriz de adyacencia
+      if (indexOrigen >= 0 && indexDestino >= 0) {
+        // matrizAdyacencia[i][j] = costo;
+        matrizAdyacencia[indexOrigen][indexDestino] = costo;
+
+        // Si el grafo no es dirigido, se podra recorrer tambien de manera inversa
+        if (!esDirigido)
+        {
+          matrizAdyacencia[indexDestino][indexOrigen] = costo;
+        }
       }
+      
     }
     token = strtok(NULL, ";");
   }
@@ -65,16 +139,47 @@ int main(int argc, char *argv[])
   // Cerrar el archivo
   fclose(archivo);
 
-  // Imprimir la matriz de adyacencia
-  printf("Matriz de Adyacencia:\n");
-  for (int i = 0; i < MAX_NODOS; i++)
+
+  printf("contadorElementos: %d\n", contadorElementos);
+  
+  // Imprimir lista de nodos de la Matriz de Adyacencia
+  printf("Indice Nodos:\n");
+  for (int i = 0; i < contadorElementos; i++) {
+    printf("%c:%d", listaVertices[i], i);
+    if (i < (contadorElementos - 1)) {
+      printf(", ");
+    }
+  }
+  printf("\n\n");
+  
+  // IMPRIMIR MATRIZ DE ADYACENCIA
+  printf("[Matriz de Adyacencia]\n");
+  for (int i = 0; i < contadorElementos; i++)
   {
-    for (int j = 0; j < MAX_NODOS; j++)
+    for (int j = 0; j < contadorElementos; j++)
     {
       printf("%2d ", matrizAdyacencia[i][j]);
     }
     printf("\n");
   }
+
+
+  /*** AREA DE PRUEBA ***/
+
+  // IMPRIMIR TABLA HASH
+  printf("\n[Tabla Hash]\n");
+  for (int i = 0; i < HASH_SIZE; i++) {
+    printf("[%d]\tVertice: %c\tid: %d\n", i, tablaHash[i].letra, tablaHash[i].id);
+  }
+
+  // IMPRIMIR LISTA DE VERTICES
+  printf("\n[Lista de Vertices]\n");
+  for (int i = 0; i < MAX_NODOS; i++) {
+    printf("[%d]\tVertice:%c\n", i, listaVertices[i]);
+  }
+
+  /*** FIN AREA DE PRUEBA ***/
+
 
   return 0;
 }
