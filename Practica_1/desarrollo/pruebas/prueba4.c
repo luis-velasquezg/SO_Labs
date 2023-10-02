@@ -2,10 +2,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <limits.h> // Para obtener los valores limites un tipo de dato
 
 int main()
 {
+  int max_integer = INT_MAX; // Valor maximo de un entero
+
   char vector[10];
   int vector2[10] = {1};
   // for (int i = 0; i < 10; i++)
@@ -15,7 +17,9 @@ int main()
 
   // vector2 = {0};
 
-  printf("%d\n", vector2);
+  printf("Valor maximo de un entero: %d\n", max_integer);
+
+  // printf("%d\n", vector2);
 
   vector[0] = 'A';
   vector[1] = 'X';

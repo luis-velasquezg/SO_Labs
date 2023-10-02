@@ -27,13 +27,10 @@ typedef struct Vertice {
 int main()
 {
 
-  // bool tablaHash[HASH_SIZE];
-
-
-  for (int i = 0; i < TABLE_SIZE; i++) {
-        myHashTable.table[i] = NULL;
-    }
-    myHashTable.elementCount = 0; // Inicializar la cantidad de elementos
+  for (int i = 0; i < TABLE_SIZE; i++)
+  {
+    tablaHash[i] = NULL;
+  }
 
 
   printf("Su nombre es %s, tiene %d años \n", "Ana", 16);

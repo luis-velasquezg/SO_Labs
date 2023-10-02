@@ -24,15 +24,16 @@ int V; // Numero de Nodos en el grafo
 Vertice tablaHash[HASH_SIZE];
 // Arreglo de Vertices (para consultar la letra teniendo su id)
 char listaVertices[MAX_NODOS];
-int contadorElementos;
+int contadorElementos; // Incrementa con cada letra nueva que encuentra
 
 
 // Funcion de hash simple para convertir un caracter en un indice
 unsigned int hash(char c) {
-    return (unsigned int)c % HASH_SIZE;
+    return (unsigned int)c % HASH_SIZE; // c mod 100
 }
 
-// Insertar vertice en la tabla hash
+
+// Insertar vertice en la Tabla Hash y el Arreglo de Vertices
 void insertarVertice (char vertice) {
   unsigned int indice = hash(vertice);
   if (tablaHash[indice].letra == '\0' && contadorElementos < MAX_NODOS)
@@ -42,15 +43,15 @@ void insertarVertice (char vertice) {
     verticeNuevo.id = contadorElementos;
     
     // Se almacena el Vertice en la Tabla Hash y la Lista de Vertices
-    tablaHash[indice] = verticeNuevo;
-    listaVertices[contadorElementos] = vertice;
+    tablaHash[indice] = verticeNuevo; // Tipo Vertice
+    listaVertices[contadorElementos] = vertice; // Tipo char
     
     contadorElementos++;
   }
 }
 
 // Retorna el id de un vertice dada su letra
-// Retorna -1 si no lo encuntra 
+// Retorna -1 si no lo encuentra 
 int obtenerVerticeId(char vertice) {
   unsigned int indice = hash(vertice);
   if (tablaHash[indice].letra != '\0') {
@@ -80,8 +81,6 @@ void revisarEjecucion() {
 
 
 
-
-
 int main(int argc, char *argv[]) {
 
   // Revisa si el numero de argumentos sea el correcto
@@ -89,6 +88,7 @@ int main(int argc, char *argv[]) {
     printf("Uso correcto: %s <nombre_archivo>\n", argv[0]);
     return 1;
   }
+
 
   // Lectura por Consola de Nodos (vertices) Origen y Destino
   char verticeOrigenIngresado, verticeDestinoIngresado;
@@ -137,6 +137,7 @@ int main(int argc, char *argv[]) {
   // Leer la segunda linea que contiene las aristas y los costos
   fgets(linea, sizeof(linea), archivo);
 
+  
   // Parsear las aristas y los costos
   char *token = strtok(linea, ";");
   while (token != NULL)
@@ -206,7 +207,10 @@ int main(int argc, char *argv[]) {
   
 
   if (verticeOrigen >= 0 && verticeDestino >= 0) {
-    V = contadorElementos;
+    // V = contadorElementos;
+    V = MAX_NODOS;
+
+
     dijkstra(matrizAdyacencia, verticeOrigen, verticeDestino);
   } else {
     printf("ERROR: No existe el Vertice de origen o destino especificado\n");
